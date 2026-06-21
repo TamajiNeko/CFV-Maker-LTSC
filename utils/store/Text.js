@@ -159,6 +159,30 @@ export const TextPreset = {
             en: "Are you sure you want to start a new project? All unsaved changes will be lost.",
             th: "คุณแน่ใจหรือไม่ว่าต้องการเริ่มโปรเจคใหม่? การเปลี่ยนแปลงที่ยังไม่ได้บันทึกทั้งหมดจะสูญหาย",
         },
+        Project: {
+            en: "Project",
+            th: "โปรเจกต์",
+        },
+        Recent: {
+            en: "Recent",
+            th: "ล่าสุด",
+        },
+        NoRecentFiles: {
+            en: "No recent files",
+            th: "ไม่มีไฟล์ล่าสุด",
+        },
+        FileNotFoundTitle: {
+            en: "File Not Found",
+            th: "ไม่พบไฟล์",
+        },
+        FileNotFoundDesc: {
+            en: "The file you are trying to open has been moved, renamed, or deleted.",
+            th: "ไฟล์ที่คุณพยายามเปิดอาจถูกย้าย เปลี่ยนชื่อ หรือลบไปแล้ว",
+        },
+        FileNotFoundOk: {
+            en: "OK",
+            th: "ตกลง",
+        },
 
         Export: {
             en: "Export",

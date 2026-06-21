@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
 import { useLang } from '../utils/LanguageProvider';
+import Tooltip from './Tooltip';
 
 export default function DropdownMenu({
   trigger,
@@ -79,13 +80,13 @@ export default function DropdownMenu({
         key={`${item.label}-${index}`}
         className="relative"
         onPointerEnter={(e) => {
-          if (e.pointerType === 'mouse' && hasChildren) {
+          if (e.pointerType === 'mouse' && hasChildren && !item.disabled) {
             clearTimeout(submenuTimeoutRef.current);
             setOpenSubmenu(item.label);
           }
         }}
         onPointerLeave={(e) => {
-          if (e.pointerType === 'mouse' && hasChildren) {
+          if (e.pointerType === 'mouse' && hasChildren && !item.disabled) {
             submenuTimeoutRef.current = setTimeout(() => setOpenSubmenu(null), 200);
           }
         }}
@@ -93,6 +94,7 @@ export default function DropdownMenu({
         <button
           onClick={(e) => {
             e.stopPropagation();
+            if (item.disabled) return;
             if (hasChildren) {
               setOpenSubmenu(prev => prev === item.label ? null : item.label);
             } else if (item.onClick) {
@@ -132,19 +134,42 @@ export default function DropdownMenu({
             onPointerEnter={(e) => e.pointerType === 'mouse' && clearTimeout(submenuTimeoutRef.current)}
           >
             {item.children.map((child, cIdx) => (
-              <button
+              <div
                 key={cIdx}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (child.onClick) child.onClick();
-                  setIsOpen(false);
-                  setOpenSubmenu(null);
-                }}
-                className="w-full px-3 py-2 text-left flex items-center justify-between gap-3 text-(--text-primary) hover:bg-(--bg-primary) pl-6 sm:pl-3"
+                className="w-full text-left flex items-center justify-between text-(--text-primary) hover:bg-(--bg-primary) pl-6 sm:pl-3 min-w-0"
               >
-                <span className={child.icon ? "ml-1" : "ml-2"}>{child.label}</span>
-                {child.subtext && <span className="text-[10px] text-(--text-secondary) font-mono">{child.subtext}</span>}
-              </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (child.onClick) child.onClick();
+                    setIsOpen(false);
+                    setOpenSubmenu(null);
+                  }}
+                  className="flex-1 min-w-0 py-2 pr-3 text-left flex items-center justify-between gap-3"
+                >
+                  <span className={`min-w-0 truncate ${child.icon ? "ml-1" : "ml-2"}`} title={child.label}>{child.label}</span>
+                  {child.subtext && (
+                    <span className="min-w-0 truncate text-[10px] text-(--text-secondary) font-mono max-w-[150px] text-right select-none" title={child.subtext}>
+                      {child.subtext}
+                    </span>
+                  )}
+                </button>
+                {child.onRemove && (
+                  <Tooltip text={lang === 'en' ? "Remove from recent" : "ลบออกจากรายการล่าสุด"} position="top">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        child.onRemove();
+                      }}
+                      className="p-1.5 text-(--text-secondary) hover:text-white rounded transition-colors mr-1 cursor-pointer shrink-0"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </Tooltip>
+                )}
+              </div>
             ))}
           </div>
         )}

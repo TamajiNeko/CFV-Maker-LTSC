@@ -103,7 +103,7 @@ function createMainWindow(showSplash = false) {
     // If it's a local docs link, open in a dedicated docs window
     if (url.includes('/docs')) {
       const docsWindowOptions = {
-        title: 'CFV Maker LTSC - Docs',
+        title: 'CFV Maker - Docs',
         icon: path.join(__dirname, 'icon.png'),
         width: 1024,
         height: 720,
@@ -131,7 +131,7 @@ function createMainWindow(showSplash = false) {
       const docsWindow = new BrowserWindow(docsWindowOptions);
 
       docsWindow.webContents.on('did-finish-load', () => {
-        docsWindow.setTitle('CFV Maker LTSC - Docs');
+        docsWindow.setTitle('CFV Maker - Docs');
       });
 
       docsWindow.loadURL(url);
@@ -151,6 +151,7 @@ function createMainWindow(showSplash = false) {
   });
 
   if (isDev) {
+    mainWindow.webContents.openDevTools();
     mainWindow.loadURL('http://localhost:3000');
   } else {
     mainWindow.loadURL('app://index.html');
@@ -285,6 +286,45 @@ app.whenReady().then(() => {
         return { success: true, filePath };
       } catch (err) {
         console.error('Failed to write file natively:', err);
+        return { success: false, error: err.message };
+      }
+    }
+    return { success: false };
+  });
+
+  // Handle checking existence and reading a local recent file
+  ipcMain.handle('read-recent-file', async (event, filePath) => {
+    const fs = require('fs');
+    try {
+      if (!fs.existsSync(filePath)) {
+        return { success: false, error: 'ENOENT' };
+      }
+      const data = fs.readFileSync(filePath);
+      return { success: true, data };
+    } catch (err) {
+      console.error('Failed to read recent file:', err);
+      return { success: false, error: err.message };
+    }
+  });
+
+  // Handle native open dialog and file reading in Electron
+  ipcMain.handle('open-file-dialog', async (event) => {
+    const { dialog } = require('electron');
+    const fs = require('fs');
+    const win = BrowserWindow.fromWebContents(event.sender);
+
+    const { filePaths } = await dialog.showOpenDialog(win, {
+      properties: ['openFile'],
+      filters: [{ name: 'Zip Files', extensions: ['zip'] }]
+    });
+
+    if (filePaths && filePaths.length > 0) {
+      const filePath = filePaths[0];
+      try {
+        const data = fs.readFileSync(filePath);
+        return { success: true, filePath, data };
+      } catch (err) {
+        console.error('Failed to read file natively:', err);
         return { success: false, error: err.message };
       }
     }

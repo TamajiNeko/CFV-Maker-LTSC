@@ -9,7 +9,7 @@ import React, {
 
 import { useTheme } from '../../../utils/ThemeProvider';
 import { useLang } from '../../../utils/LanguageProvider';
-import { useCardState } from '../../../utils/store/State';
+import { useCardState, addRecentFile, removeRecentFile } from '../../../utils/store/State';
 import { useIconConfig } from '../../../utils/store/IconConfig';
 
 import { exportCardToZip, previewZip } from '../../../utils/CardIO';
@@ -29,12 +29,13 @@ import {
     IconPack,
     IconSymbolIcon,
     WarningIcon,
-    PlusIcon
+    PlusIcon,
+    RecentIcon
 } from '../../../components/Icon';
 
 const version = process.env.TEMPLATE_VERSION;
 
-export default function NavBar() {
+export default function NavBar({ openRecentFile }) {
     const { theme, toggleTheme } = useTheme();
     const { lang, setLang } = useLang();
 
@@ -98,6 +99,11 @@ export default function NavBar() {
         }
     }, []);
 
+    const handleRemoveRecent = useCallback((filePath) => {
+        const newRecent = removeRecentFile(filePath);
+        setField('recentFiles', newRecent);
+    }, [setField]);
+
     const handleExportCard = useCallback(async () => {
         const cardData = {
             cardName: state.cardName,
@@ -141,6 +147,11 @@ export default function NavBar() {
         );
 
         setField('isSaved', result.success);
+
+        if (result.success && result.filePath) {
+            const newRecent = addRecentFile(result.filePath);
+            setField('recentFiles', newRecent);
+        }
     }, [state, lang]);
 
     useEffect(() => {
@@ -190,9 +201,14 @@ export default function NavBar() {
                 setField('tempImageSrc', preview.imageUrl);
             }
 
+            const filePath = (window.electronAPI && window.electronAPI.getPathForFile)
+                ? window.electronAPI.getPathForFile(file)
+                : file.path;
+
             setMultiple({
                 importPreview: {
                     file,
+                    filePath,
                     ...preview,
                 },
                 showImportModal: true,
@@ -405,7 +421,7 @@ export default function NavBar() {
                     }
                     items={[
                         {
-                            section: t.NewProject[lang],
+                            section: t.Project[lang],
                             label: t.NewProject[lang],
                             icon: <PlusIcon />,
                             children: [
@@ -418,6 +434,25 @@ export default function NavBar() {
                                     onClick: handleNewProjectNewWindow,
                                 }
                             ]
+                        },
+                        {
+                            section: t.Project[lang],
+                            label: t.Recent[lang],
+                            icon: <RecentIcon />,
+                            disabled: !state.recentFiles || state.recentFiles.length === 0,
+                            children: state.recentFiles && state.recentFiles.length > 0
+                                ? state.recentFiles.map(file => ({
+                                    label: file.name,
+                                    subtext: file.path,
+                                    onClick: () => openRecentFile && openRecentFile(file.path),
+                                    onRemove: () => handleRemoveRecent(file.path)
+                                  }))
+                                : [
+                                    {
+                                        label: t.NoRecentFiles[lang],
+                                        disabled: true
+                                    }
+                                  ]
                         },
 
                         {
@@ -487,7 +522,36 @@ export default function NavBar() {
                             section: t.Import[lang],
                             label: t.ImportTemplate[lang],
                             icon: <ZipIcon />,
-                            onClick: () => document.getElementById('import-file-input')?.click(),
+                            onClick: async () => {
+                                if (typeof window !== 'undefined' && window.electronAPI && window.electronAPI.openFileDialog) {
+                                    const result = await window.electronAPI.openFileDialog();
+                                    if (result.success && result.filePath && result.data) {
+                                        setField('isImportingPreview', true);
+                                        const preview = await previewZip(result.data);
+
+                                        if (preview.success) {
+                                            if (preview.imageUrl) {
+                                                setField('tempImageSrc', preview.imageUrl);
+                                            }
+
+                                            const filename = result.filePath.split(/[/\\]/).pop() || 'card.zip';
+                                            const file = new File([result.data], filename);
+
+                                            setMultiple({
+                                                importPreview: {
+                                                    file,
+                                                    filePath: result.filePath,
+                                                    ...preview,
+                                                },
+                                                showImportModal: true,
+                                            });
+                                        }
+                                        setField('isImportingPreview', false);
+                                    }
+                                } else {
+                                    document.getElementById('import-file-input')?.click();
+                                }
+                            },
                         },
 
                         {

@@ -21,7 +21,7 @@ function DocsContent() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    document.title = "CFV Maker LTSC - Docs";
+    document.title = "CFV Maker - Docs";
   }, []);
 
   const section =

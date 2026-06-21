@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "file-saver": "^2.0.5",
-    "html2canvas": "^1.4.1",
     "jszip": "^3.10.1",
     "konva": "^10.2.5",
     "next": "16.2.4",
@@ -32,7 +31,7 @@
   },
   "build": {
     "appId": "com.cfvmaker.app",
-    "productName": "CFV Maker LTSC",
+    "productName": "CFV Maker",
     "directories": {
       "output": "dist"
     },

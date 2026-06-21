@@ -47,7 +47,57 @@ export const initialState = {
   tempImageSrc: null,
   isImportingPreview: false,
   customLayers: [],
+  recentFiles: loadRecentFiles(),
+  showFileNotFoundModal: false,
+  fileNotFoundPath: "",
 };
+
+export function loadRecentFiles() {
+  if (typeof window !== "undefined") {
+    try {
+      const stored = localStorage.getItem("cfv-maker-recent-files");
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+  return [];
+}
+
+export function addRecentFile(filePath) {
+  if (!filePath) return [];
+  const name = filePath.split(/[/\\]/).pop() || filePath;
+  let files = loadRecentFiles();
+
+  files = files.filter(f => f.path !== filePath);
+  files.unshift({ name, path: filePath, timestamp: Date.now() });
+  files = files.slice(0, 10);
+
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem("cfv-maker-recent-files", JSON.stringify(files));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  return files;
+}
+
+export function removeRecentFile(filePath) {
+  if (!filePath) return [];
+  let files = loadRecentFiles();
+
+  files = files.filter(f => f.path !== filePath);
+
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem("cfv-maker-recent-files", JSON.stringify(files));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  return files;
+}
 
 function reducer(state, action) {
   switch (action.type) {
