@@ -146,9 +146,9 @@ export default function DropdownMenu({
                   }}
                   className="flex-1 min-w-0 py-2 pr-3 text-left flex items-center justify-between gap-3"
                 >
-                  <span className={`min-w-0 flex-1 truncate ${child.icon ? "ml-1" : "ml-2"}`} title={child.label}>{child.label}</span>
+                  <span className={`min-w-0 flex-1 truncate ${child.icon ? "ml-1" : "ml-2"}`}>{child.label}</span>
                   {child.subtext && (
-                    <span className="min-w-0 shrink max-w-[100px] truncate text-[10px] text-(--text-secondary) font-mono text-right select-none" title={child.subtext}>
+                    <span className="min-w-0 shrink max-w-25 truncate text-[10px] text-(--text-secondary) font-mono text-right select-none">
                       {child.subtext}
                     </span>
                   )}
@@ -159,7 +159,6 @@ export default function DropdownMenu({
                       e.stopPropagation();
                       child.onRemove();
                     }}
-                    title={lang === 'en' ? "Remove from recent" : "ลบออกจากรายการล่าสุด"}
                     className="p-1.5 text-(--text-secondary) hover:text-white rounded transition-colors mr-1 cursor-pointer shrink-0"
                   >
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">

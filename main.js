@@ -286,14 +286,26 @@ app.whenReady().then(() => {
   });
 
   // Handle native save dialog and file writing in Electron
-  ipcMain.handle('save-file-dialog', async (event, { data, defaultPath }) => {
+  ipcMain.handle('save-file-dialog', async (event, { data, defaultPath, filters }) => {
     const { dialog } = require('electron');
     const fs = require('fs');
     const win = BrowserWindow.fromWebContents(event.sender);
 
+    let dialogFilters = filters;
+    if (!dialogFilters) {
+      const ext = path.extname(defaultPath).toLowerCase().replace('.', '');
+      if (ext === 'zip') {
+        dialogFilters = [{ name: 'Zip Files', extensions: ['zip'] }];
+      } else if (ext === 'png') {
+        dialogFilters = [{ name: 'PNG Images', extensions: ['png'] }];
+      } else {
+        dialogFilters = [{ name: 'All Files', extensions: ['*'] }];
+      }
+    }
+
     const { filePath } = await dialog.showSaveDialog(win, {
       defaultPath,
-      filters: [{ name: 'Zip Files', extensions: ['zip'] }]
+      filters: dialogFilters
     });
 
     if (filePath) {

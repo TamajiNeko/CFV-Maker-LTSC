@@ -444,7 +444,7 @@ export default function NavBar() {
                         {
                             section: t.Export[lang],
                             label: t.DownloadImage[lang],
-                            icon: <DownloadIcon />,
+                            icon: <ImageIcon />,
                             onClick: () => {
                                 setTimeout(() => {
                                     setField('exportTrigger', state.exportTrigger + 1);

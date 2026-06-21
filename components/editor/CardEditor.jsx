@@ -389,19 +389,30 @@ export default function CardEditor({
       const ctx = tempCanvas.getContext('bitmaprenderer');
       ctx.transferFromImageBitmap(bitmap);
 
-      tempCanvas.toBlob((blob) => {
-        const url = URL.createObjectURL(blob);
+      tempCanvas.toBlob(async (blob) => {
         const safeFileName = overlayCardName.replace(/[/\\?%*:|"<>]/g, '').trim() || 'card';
 
-        const link = document.createElement('a');
-        link.download = `${safeFileName}.png`;
-        link.href = url;
-        document.body.appendChild(link);
-        link.click();
+        if (typeof window !== 'undefined' && window.electronAPI && window.electronAPI.saveFile) {
+          try {
+            const arrayBuffer = await blob.arrayBuffer();
+            await window.electronAPI.saveFile(arrayBuffer, `${safeFileName}.png`);
+          } catch (e) {
+            console.error('Failed to save file natively:', e);
+          } finally {
+            bitmap.close();
+          }
+        } else {
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.download = `${safeFileName}.png`;
+          link.href = url;
+          document.body.appendChild(link);
+          link.click();
 
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        bitmap.close();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+          bitmap.close();
+        }
       }, 'image/png');
 
     } catch (error) {

@@ -181,8 +181,8 @@ export const TextPreset = {
         },
 
         DownloadImage: {
-            en: "Download Image",
-            th: "ดาวน์โหลดภาพ",
+            en: "Export Image",
+            th: "ส่งออกรูปภาพ",
         },
 
         Maximum: {
@@ -526,16 +526,16 @@ export const TextPreset = {
             th: "ไปที่",
         },
         downloadImg: {
-            en: "Download Image",
-            th: "ดาวน์โหลดรูปภาพ",
+            en: "Export Image",
+            th: "ส่งออกรูปภาพ",
         },
         selectQuality: {
             en: "Select Image Quality",
             th: "เลือกความละเอียดรูปภาพ",
         },
         exportTemplate: {
-            en: "Export Template",
-            th: "ส่งออกเทมเพลต",
+            en: "Save",
+            th: "บันทึก",
         },
     },
     IconPacksPage: {
@@ -718,14 +718,14 @@ export const TextPreset = {
             },
             {
                 id: "save",
-                name: { en: "Save / Export Card", th: "บันทึก / ส่งออกการ์ด" },
-                desc: { en: "Export card to .zip file", th: "ส่งออกการ์ดเป็นไฟล์ .zip" },
+                name: { en: "Save", th: "บันทึก" },
+                desc: { en: "Save card to .zip file", th: "บันทึกการ์ดเป็นไฟล์ .zip" },
                 keys: "Ctrl+S",
             },
             {
                 id: "quick_download",
-                name: { en: "Quick Download", th: "ดาวน์โหลดด่วน" },
-                desc: { en: "Quick download image with last settings", th: "ดาวน์โหลดภาพทันทีด้วยการตั้งค่าครั้งล่าสุด" },
+                name: { en: "Quick Export", th: "ส่งออกด่วน" },
+                desc: { en: "Quick export image with last settings", th: "ส่งออกภาพทันทีด้วยการตั้งค่าครั้งล่าสุด" },
                 keys: "Ctrl+Shift+S",
             },
             {

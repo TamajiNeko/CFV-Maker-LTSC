@@ -18,5 +18,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
     };
   },
   forceClose: () => ipcRenderer.send('force-close-window'),
-  saveFile: (data, defaultPath) => ipcRenderer.invoke('save-file-dialog', { data, defaultPath })
+  saveFile: (data, defaultPath, filters) => ipcRenderer.invoke('save-file-dialog', { data, defaultPath, filters })
 });

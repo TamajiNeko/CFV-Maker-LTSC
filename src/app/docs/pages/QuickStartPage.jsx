@@ -66,7 +66,7 @@ export default function QuickStartPage() {
             </span>
             <span className="inline-flex items-center mx-1"><ArrowRightIcon /></span>
             <span className="inline-flex items-center whitespace-nowrap">
-              <span className="mr-1"><DownloadIcon size={17} /></span> {t.downloadImg[lang]}
+              <span className="mr-1"><ImageIcon size={17} /></span> {t.downloadImg[lang]}
             </span>
             <span className="inline-flex items-center mx-1"><ArrowRightIcon /></span>
             <span className="whitespace-nowrap">{t.selectQuality[lang]}</span>
