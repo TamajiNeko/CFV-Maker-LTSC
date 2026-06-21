@@ -2,7 +2,7 @@
 import { useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
-const Tooltip = ({ text, children, position = "top" }) => {
+const Tooltip = ({ text, children, position = "top", className = "inline-block w-fit h-fit" }) => {
   const [visible, setVisible] = useState(false);
   const [coords, setCoords] = useState({ x: 0, y: 0 });
   const containerRef = useRef(null);
@@ -30,7 +30,7 @@ const Tooltip = ({ text, children, position = "top" }) => {
   return (
     <div 
       ref={containerRef}
-      className="inline-block w-fit h-fit"
+      className={className}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={() => setVisible(false)}
     >

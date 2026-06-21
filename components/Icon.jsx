@@ -251,10 +251,3 @@ export const EyeClosedIcon = (props) => (
     />
   </BaseIcon>
 );
-
-export const RecentIcon = (props) => (
-  <BaseIcon {...props}>
-    <circle cx="12" cy="12" r="10" />
-    <polyline points="12 6 12 12 16 14" />
-  </BaseIcon>
-);

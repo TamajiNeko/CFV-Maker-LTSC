@@ -75,12 +75,9 @@ export default function Workspace() {
                 if (preview.imageUrl) {
                     setField('tempImageSrc', preview.imageUrl);
                 }
-                const filePath = (window.electronAPI && window.electronAPI.getPathForFile)
-                    ? window.electronAPI.getPathForFile(file)
-                    : file.path;
 
                 setMultiple({
-                    importPreview: { file, filePath, ...preview },
+                    importPreview: { file, ...preview },
                     showImportModal: true,
                 });
             } else {

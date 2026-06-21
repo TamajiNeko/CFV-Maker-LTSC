@@ -292,44 +292,7 @@ app.whenReady().then(() => {
     return { success: false };
   });
 
-  // Handle checking existence and reading a local recent file
-  ipcMain.handle('read-recent-file', async (event, filePath) => {
-    const fs = require('fs');
-    try {
-      if (!fs.existsSync(filePath)) {
-        return { success: false, error: 'ENOENT' };
-      }
-      const data = fs.readFileSync(filePath);
-      return { success: true, data };
-    } catch (err) {
-      console.error('Failed to read recent file:', err);
-      return { success: false, error: err.message };
-    }
-  });
 
-  // Handle native open dialog and file reading in Electron
-  ipcMain.handle('open-file-dialog', async (event) => {
-    const { dialog } = require('electron');
-    const fs = require('fs');
-    const win = BrowserWindow.fromWebContents(event.sender);
-
-    const { filePaths } = await dialog.showOpenDialog(win, {
-      properties: ['openFile'],
-      filters: [{ name: 'Zip Files', extensions: ['zip'] }]
-    });
-
-    if (filePaths && filePaths.length > 0) {
-      const filePath = filePaths[0];
-      try {
-        const data = fs.readFileSync(filePath);
-        return { success: true, filePath, data };
-      } catch (err) {
-        console.error('Failed to read file natively:', err);
-        return { success: false, error: err.message };
-      }
-    }
-    return { success: false };
-  });
 
   createMainWindow(true);
 

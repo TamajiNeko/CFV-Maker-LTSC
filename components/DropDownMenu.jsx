@@ -147,11 +147,15 @@ export default function DropdownMenu({
                   }}
                   className="flex-1 min-w-0 py-2 pr-3 text-left flex items-center justify-between gap-3"
                 >
-                  <span className={`min-w-0 truncate ${child.icon ? "ml-1" : "ml-2"}`} title={child.label}>{child.label}</span>
+                  <Tooltip text={child.label} className="min-w-0 flex-1">
+                    <span className={`block truncate ${child.icon ? "ml-1" : "ml-2"}`}>{child.label}</span>
+                  </Tooltip>
                   {child.subtext && (
-                    <span className="min-w-0 truncate text-[10px] text-(--text-secondary) font-mono max-w-[150px] text-right select-none" title={child.subtext}>
-                      {child.subtext}
-                    </span>
+                    <Tooltip text={child.subtext} className="min-w-0 shrink max-w-[100px]">
+                      <span className="block truncate text-[10px] text-(--text-secondary) font-mono text-right select-none">
+                        {child.subtext}
+                      </span>
+                    </Tooltip>
                   )}
                 </button>
                 {child.onRemove && (

@@ -23,9 +23,7 @@ CFV Maker provides a powerful interface to design custom Vanguard card designs.
 - **Custom Frame Layers:** Upload and manage custom layout frames or custom borders to design unique cards.
 
 ### 3. Project Management
-- **Unified Project Menu:** Under the **Project** menu in the header, you can start new projects (same window or new window) and manage your recent files.
-- **Recent Files Submenu:** The editor keeps track of the last 10 recently opened or saved templates. You can reload these files directly or click the **"x"** button to remove them from your list.
-- **Natively Saved Modal:** When loading a file from your recent list in Electron, the app validates its presence on disk. If the file has been moved, renamed, or deleted, a warning modal will appear.
+- **Unified File Menu:** Under the **File** menu in the header, you can start new projects (same window or new window).
 - **Exporting/Importing:** Save backups of your layout configuration and art by exporting them as `.zip` template bundles. Export finalized designs as high-resolution PNG images.
 
 ---

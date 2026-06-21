@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer, webUtils } = require('electron');
+const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electronAPI', {
   setTheme: (theme) => ipcRenderer.send('theme-changed', theme),
@@ -18,15 +18,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
     };
   },
   forceClose: () => ipcRenderer.send('force-close-window'),
-  saveFile: (data, defaultPath) => ipcRenderer.invoke('save-file-dialog', { data, defaultPath }),
-  readRecentFile: (filePath) => ipcRenderer.invoke('read-recent-file', filePath),
-  openFileDialog: () => ipcRenderer.invoke('open-file-dialog'),
-  getPathForFile: (file) => {
-    try {
-      return webUtils.getPathForFile(file);
-    } catch (e) {
-      console.error('Failed to get path for file:', e);
-      return file.path || '';
-    }
-  }
+  saveFile: (data, defaultPath) => ipcRenderer.invoke('save-file-dialog', { data, defaultPath })
 });

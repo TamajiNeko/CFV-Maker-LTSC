@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { HexColorPicker } from 'react-colorful';
+import Tooltip from './Tooltip';
 
 export default function GradientInput({
   label,
@@ -134,16 +135,17 @@ export default function GradientInput({
                     handleRemoveColor(index);
                   }}
                 />
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRemoveColor(index);
-                  }}
-                  className="md:hidden absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 border border-white flex items-center justify-center text-white text-[10px] font-bold shadow-md active:bg-red-700"
-                  title="Remove color"
-                >
-                  ×
-                </button>
+                <Tooltip text="Remove color" className="md:hidden absolute -top-1 -right-1 z-10">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveColor(index);
+                    }}
+                    className="w-4 h-4 rounded-full bg-red-500 border border-white flex items-center justify-center text-white text-[10px] font-bold shadow-md active:bg-red-700"
+                  >
+                    ×
+                  </button>
+                </Tooltip>
               </div>
             ))}
 

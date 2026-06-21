@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
-import { CardProvider, useCardState, addRecentFile } from '../../utils/store/State';
+import { CardProvider, useCardState } from '../../utils/store/State';
 import { importCardFromZip, exportCardToZip } from '../../utils/CardIO';
 import { TextPreset } from '../../utils/store/Text';
 import { useLang } from '../../utils/LanguageProvider';
@@ -132,8 +132,6 @@ function PageContent() {
 
     const confirmImport = async () => {
         if (!state.importPreview) return;
-        const filePath = state.importPreview.filePath;
-        console.log("[CFV Maker] Import filePath detected:", filePath);
 
         const result = await importCardFromZip(state.importPreview.file);
 
@@ -180,11 +178,6 @@ function PageContent() {
             setLang(data.lang || "en");
             setField('isSaved', true);
 
-            if (filePath) {
-                const newRecent = addRecentFile(filePath);
-                setField('recentFiles', newRecent);
-            }
-
             if (data.imageConfig) {
                 setImageConfig({
                     scale: data.imageConfig.scale ?? 1,
@@ -203,81 +196,6 @@ function PageContent() {
             if (fileInput) fileInput.value = '';
         } else {
             cancelImport();
-        }
-    };
-
-    const handleOpenRecent = async (filePath) => {
-        if (typeof window !== 'undefined' && window.electronAPI && window.electronAPI.readRecentFile) {
-            setField('isImporting', true);
-            const fileResult = await window.electronAPI.readRecentFile(filePath);
-            setField('isImporting', false);
-
-            if (!fileResult.success) {
-                setMultiple({
-                    showFileNotFoundModal: true,
-                    fileNotFoundPath: filePath
-                });
-            } else {
-                const result = await importCardFromZip(fileResult.data);
-                if (result.success) {
-                    const data = result.cardData;
-                    skipResetRef.current = true;
-
-                    setMultiple({
-                        isFullArt: data.isFullArt || false,
-                        showGlobe: data.showGlobe || false,
-                        showClan: data.showClan ?? false,
-                        baseColorTint: data.baseColorTint || { enabled: false, color: '#ff0000' },
-                        cardName: data.cardName || "N/A",
-                        illust: data.illust || "",
-                        flavor: data.flavor || "",
-                        abilities: data.abilities || "",
-                        grade: data.grade ?? 0,
-                        power: data.power ?? 0,
-                        raceText: data.raceText || "N/A",
-                        raceCheck: data.raceCheck ?? false,
-                        shield: data.shield ?? 0,
-                        shieldCheck: data.shieldCheck ?? true,
-                        selectedNation: data.selectedNation || nationOption[0].file,
-                        clan: data.clan || null,
-                        selectedType: data.selectedType || typeOption[0].file,
-                        subOrderType: data.subOrderType || "N/A",
-                        isSubType: data.isSubType || false,
-                        selectedPassive: data.selectedPassive || passiveOption[0].file,
-                        selectedTrigger: data.selectedTrigger || triggerOption[2].file,
-                        addition: data.addition ?? "",
-                        imageSrc: result.imageUrl || state.tempImageSrc,
-                        customLayers: result.customLayers || [],
-                        customNationEnabled: data.customNationEnabled || false,
-                        solidColor: data.solidColor || "#ffffff",
-                        customNationName: data.customNationName || "N/A",
-                        cardNameGradient: data.cardNameGradient || ["#ffffff"],
-                        nationGradient: data.nationGradient || ["#ffffff"],
-                    });
-
-                    setLang(data.lang || "en");
-                    setField('isSaved', true);
-
-                    const newRecent = addRecentFile(filePath);
-                    setField('recentFiles', newRecent);
-
-                    if (data.imageConfig) {
-                        setImageConfig({
-                            scale: data.imageConfig.scale ?? 1,
-                            x: data.imageConfig.x ?? 0,
-                            y: data.imageConfig.y ?? 0,
-                        });
-                    } else {
-                        setImageConfig({ scale: 1, x: 0, y: 0 });
-                    }
-
-                    setTimeout(() => {
-                        skipResetRef.current = false;
-                    }, 100);
-                } else {
-                    console.error('Import from recent file failed:', result.error);
-                }
-            }
         }
     };
 
@@ -370,7 +288,7 @@ function PageContent() {
 
     return (
         <div className="flex flex-col flex-1 min-h-0 bg-(--bg-primary) text-(--text-primary) font-sans transition-colors duration-300">
-            <NavBar openRecentFile={handleOpenRecent} />
+            <NavBar />
 
             <div className="flex flex-1 overflow-hidden">
                 <LeftPanel />
@@ -520,32 +438,6 @@ function PageContent() {
                 </div>
             )}
 
-            {state.showFileNotFoundModal && (
-                <div className="fixed inset-0 z-99999 flex items-center justify-center bg-black/50 p-4">
-                    <div className="w-full max-w-md rounded-md bg-(--panel-bg) border border-(--panel-border) shadow-2xl flex flex-col overflow-hidden">
-                        <div className="flex items-center gap-3 border-b border-(--panel-border) bg-(--toolbar-bg) px-5 py-4">
-                            <WarningIcon className="w-5 h-5 text-red-500 shrink-0" />
-                            <h1 className="text-base font-semibold text-(--text-primary)">
-                                {TextPreset.EditNav.FileNotFoundTitle[lang]}
-                            </h1>
-                        </div>
-                        <div className="px-5 py-4 text-sm text-(--text-secondary) leading-relaxed">
-                            {TextPreset.EditNav.FileNotFoundDesc[lang]}
-                            <div className="mt-2 p-2 bg-(--bg-secondary) rounded border border-(--border-color) text-xs font-mono break-all max-h-24 overflow-y-auto select-text text-(--text-primary)">
-                                {state.fileNotFoundPath}
-                            </div>
-                        </div>
-                        <div className="flex justify-end items-center gap-2 px-4 py-3 border-t border-(--panel-border) bg-(--toolbar-bg) rounded-b-md">
-                            <button
-                                onClick={() => setMultiple({ showFileNotFoundModal: false, fileNotFoundPath: "" })}
-                                className="px-5 py-1.5 text-sm font-medium bg-(--accent) text-white rounded hover:brightness-110 transition-colors"
-                            >
-                                {TextPreset.EditNav.FileNotFoundOk[lang]}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 }
