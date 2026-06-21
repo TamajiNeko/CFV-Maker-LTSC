@@ -45,8 +45,12 @@ export default function NavBar() {
 
     const [deviceMemory, setDeviceMemory] = useState(null);
     const [showNewProjectConfirmModal, setShowNewProjectConfirmModal] = useState(false);
+    const [isElectron, setIsElectron] = useState(false);
 
     useEffect(() => {
+        setIsElectron(
+            typeof window !== "undefined" && !!window.electronAPI
+        );
         if (typeof navigator !== "undefined") {
             setDeviceMemory(
                 navigator.deviceMemory || null
@@ -382,17 +386,19 @@ export default function NavBar() {
                     onChange={handleImportIcon}
                 />
 
-                <Link
-                    href="/docs"
-                    target='_blank'
-                    className="px-2 py-2 sm:px-3 sm:py-1.5 rounded-md text-sm font-medium transition-all border bg-(--bg-secondary) hover:bg-(--bg-primary) border-(--border-color) text-(--text-primary) flex items-center gap-2"
-                >
-                    <DocsIcon />
+                {!isElectron && (
+                    <Link
+                        href="/docs"
+                        target='_blank'
+                        className="px-2 py-2 sm:px-3 sm:py-1.5 rounded-md text-sm font-medium transition-all border bg-(--bg-secondary) hover:bg-(--bg-primary) border-(--border-color) text-(--text-primary) flex items-center gap-2"
+                    >
+                        <DocsIcon />
 
-                    <span className="hidden sm:inline">
-                        {t.Docs[lang]}
-                    </span>
-                </Link>
+                        <span className="hidden sm:inline">
+                            {t.Docs[lang]}
+                        </span>
+                    </Link>
+                )}
 
                 <DropdownMenu
                     trigger={

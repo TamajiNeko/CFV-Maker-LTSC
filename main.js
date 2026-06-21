@@ -1,4 +1,4 @@
-const { app, BrowserWindow, protocol, net, Menu, ipcMain, nativeTheme } = require('electron');
+const { app, BrowserWindow, protocol, net, Menu, ipcMain, nativeTheme, session } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { pathToFileURL } = require('url');
@@ -130,6 +130,19 @@ function createMainWindow(showSplash = false) {
 
       const docsWindow = new BrowserWindow(docsWindowOptions);
 
+      docsWindow.webContents.setWindowOpenHandler(({ url }) => {
+        if (url.startsWith('app://') || url.startsWith('http://localhost')) {
+          if (mainWindowRef && !mainWindowRef.isDestroyed()) {
+            if (mainWindowRef.isMinimized()) mainWindowRef.restore();
+            mainWindowRef.focus();
+          }
+          return { action: 'deny' };
+        }
+        const { shell } = require('electron');
+        shell.openExternal(url);
+        return { action: 'deny' };
+      });
+
       docsWindow.webContents.on('did-finish-load', () => {
         docsWindow.setTitle('CFV Maker - Docs');
       });
@@ -186,7 +199,7 @@ app.whenReady().then(() => {
 
   // Register custom protocol handler in production
   if (!isDev) {
-    protocol.handle('app', (request) => {
+    const handleAppProtocol = (request) => {
       // Rewrite app:// to a http:// format to properly parse paths on all platforms
       const urlString = request.url.replace(/^app:\/\//, 'http://app-assets/');
       const url = new URL(urlString);
@@ -225,7 +238,10 @@ app.whenReady().then(() => {
       return new Response(stream, {
         headers: { 'content-type': mimeType }
       });
-    });
+    };
+
+    protocol.handle('app', handleAppProtocol);
+    session.fromPartition('docs').protocol.handle('app', handleAppProtocol);
   }
 
   // Dynamically update operating system native title bars to match the app's theme
