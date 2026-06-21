@@ -1,0 +1,236 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@font-face {
+  font-family: 'Seed';
+  src: url('/fonts/LINESeedSansTH_Rg.ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'OptimaLT';
+  src: url('/fonts/OptimaNovaLTPro.otf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Columbia';
+  src: url('/fonts/ColumbiaRegular.otf');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Anton';
+  src: url('/fonts/Anton-Anzeigen.otf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Bodrum';
+  src: url('/fonts/BodrumSoft.ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'PSLxImperial';
+  src: url('/fonts/PSLxImperial.otf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'PSLxOlarn';
+  src: url('/fonts/PSLxOlarn.otf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sirin';
+  src: url('/fonts/DSN.ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  --font-sans: 'Seed';
+  --bg-primary: #e8e8e8;
+  --bg-secondary: #f5f5f5;
+  --panel-bg: #fcfcfc;
+  --panel-border: #d0d0d0;
+  --border-color: #c0c0c0;
+  --text-primary: #1a1a1a;
+  --text-secondary: #5a5a5a;
+  --card-bg: #f0f0f0;
+  --card-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.15);
+  --input-bg: #f2f2f2;
+  --input-border: #b0b0b0;
+  --scrollbar-track: #e0e0e0;
+  --scrollbar-thumb: #c0c0c0;
+  --scrollbar-thumb-hover: #a0a0a0;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --accent: #1084e6;
+  --accent-hover: #0c6bc0;
+  --toolbar-bg: #e0e0e0;
+  --workspace-bg: #d4d4d4;
+}
+
+.dark {
+  --bg-primary: #1e1e1e;
+  --bg-secondary: #252525;
+  --panel-bg: #2d2d2d;
+  --panel-border: #404040;
+  --border-color: #404040;
+  --text-primary: #e8e8e8;
+  --text-secondary: #a0a0a0;
+  --card-bg: #3a3a3a;
+  --card-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3);
+  --input-bg: #3d3d3d;
+  --input-border: #505050;
+  --scrollbar-track: #252525;
+  --scrollbar-thumb: #4a4a4a;
+  --scrollbar-thumb-hover: #606060;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.35);
+  --accent: #1084e6;
+  --accent-hover: #288ef0;
+  --toolbar-bg: #252525;
+  --workspace-bg: #1a1a1a;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+::selection {
+  background-color: var(--accent);
+  color: white;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-left: 1px solid var(--border-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border: 1px solid var(--border-color);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--scrollbar-track);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+input,
+select,
+textarea {
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text-primary);
+  transition: all 0.15s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: none;
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button,
+.btn-like,
+a {
+  transition: all 0.15s ease;
+}
+
+.photoshop-nav {
+  background-color: var(--toolbar-bg);
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.photoshop-panel {
+  background-color: var(--panel-bg);
+  border-right: 1px solid var(--panel-border);
+  border-left: 1px solid var(--panel-border);
+}
+
+.photoshop-workspace {
+  background-color: var(--workspace-bg);
+}
+
+.card-preview-area {
+  background-color: var(--card-bg);
+  box-shadow: var(--card-shadow);
+}
+
+label {
+  color: var(--text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.checkbox-custom {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+  transition: all 0.15s ease;
+}
+
+.checkbox-custom.checked {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+.section-header {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 1px;
+}
