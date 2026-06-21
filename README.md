@@ -81,12 +81,19 @@ The build system and tooling environment depend on:
 ```
 ---
 
-## License & Copyright Disclaimer
+## License
 
-This project is licensed under the **MIT License**. You are free to copy, modify, and distribute the code and source configurations.
+This project's source code is licensed under the MIT License.
 
-### Disclaimer regarding assets:
-The MIT License **only** applies to the source code and editor logic. 
-All graphical templates, card frames, nation logos, trigger icons, and Cardfight!! Vanguard card layout designs included in this repository are copyrighted trademarks of **Bushiroad Inc.** and are used strictly under fair use for educational and fan-made card creation. 
+### Assets & Trademarks
 
-These assets **do not** belong to the repository author, are **not** covered by the MIT license, and must **not** be commercialized or redistributed for profit. For more details, see the [LICENSE](LICENSE) file.
+Artwork, card frames, nation logos, trigger icons, and other Cardfight!! Vanguard-related visual assets are not covered by the MIT License.
+
+These materials may contain copyrighted works and trademarks owned by Bushiroad Inc. and their respective rights holders. They are included solely for fan-made, educational, and compatibility purposes.
+
+CFV Maker is an independent fan project and is not affiliated with, endorsed by, or sponsored by Bushiroad Inc.
+
+For complete licensing information:
+
+* Source Code License: [LICENSE](LICENSE)
+* Asset & Trademark Notice: [ASSETS_LICENSE.md](ASSETS_LICENSE.md)
