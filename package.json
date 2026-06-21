@@ -1,0 +1,57 @@
+{
+  "name": "cfv-maker-ltsc",
+  "version": "1.2.7",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "electron:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron:build": "node -e \"const fs = require('fs'); ['dist', 'out', '.next'].forEach(dir => { if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true }); }); const pkg = require('./package.json'); pkg.version = fs.readFileSync('.version', 'utf8').trim(); fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\\n');\" && npm run build && electron-builder"
+  },
+  "dependencies": {
+    "file-saver": "^2.0.5",
+    "html2canvas": "^1.4.1",
+    "jszip": "^3.10.1",
+    "konva": "^10.2.5",
+    "next": "16.2.4",
+    "react": "19.2.4",
+    "react-colorful": "^5.7.0",
+    "react-dom": "19.2.4",
+    "react-konva": "^19.2.3",
+    "use-image": "^1.1.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "concurrently": "^10.0.3",
+    "electron": "^42.4.1",
+    "electron-builder": "^26.15.3",
+    "tailwindcss": "^4",
+    "wait-on": "^9.0.10"
+  },
+  "build": {
+    "appId": "com.cfvmaker.app",
+    "productName": "CFV Maker LTSC",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "out/**/*",
+      "main.js",
+      "preload.js",
+      "package.json",
+      "icon.png",
+      "splash.html"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "icon.png",
+      "artifactName": "${productName} Setup ${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}

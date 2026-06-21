@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @font-face {
+      font-family: 'Seed';
+      src: url('out/fonts/LINESeedSansTH_Rg.ttf'),
+           url('public/fonts/LINESeedSansTH_Rg.ttf');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    :root {
+      --bg-color: #f5f5f5;
+      --text-color: #1a1a1a;
+      --text-secondary: #5a5a5a;
+      --border-color: #d0d0d0;
+      --progress-bg: #e0e0e0;
+      --progress-fill: #1084e6;
+      --image-bg: transparent;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #1e1e1e;
+        --text-color: #e8e8e8;
+        --text-secondary: #a0a0a0;
+        --border-color: #404040;
+        --progress-bg: #252525;
+        --image-bg: transparent;
+      }
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Seed', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-app-region: drag;
+    }
+    .image-container {
+      width: 100%;
+      height: 0;
+      padding-bottom: 56.25%;
+      position: relative;
+      background-color: var(--image-bg);
+      overflow: hidden;
+    }
+    .image-container img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .loading-container {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 12px 16px;
+      box-sizing: border-box;
+      -webkit-app-region: no-drag;
+    }
+    .loading-text {
+      font-size: 11px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 2px;
+    }
+    .progress-bar-bg {
+      width: 100%;
+      height: 3px;
+      background-color: var(--progress-bg);
+      margin-top: 8px;
+      border-radius: 1.5px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      width: 0%;
+      height: 100%;
+      background-color: var(--progress-fill);
+      transition: width 0.12s linear;
+      border-radius: 1.5px;
+    }
+    .overlay-text {
+      position: absolute;
+      color: #ffffff;
+      font-family: 'Seed', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 10px;
+      font-weight: 400;
+      text-shadow: 
+        -1px -1px 0 #000,  
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000;
+      letter-spacing: 0.5px;
+      pointer-events: none;
+      -webkit-user-select: none;
+      user-select: none;
+      opacity: 0.85;
+    }
+    .overlay-text.top-right {
+      top: 8px;
+      right: 16px;
+    }
+    .overlay-text.bottom-right {
+      bottom: 8px;
+      right: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="image-container">
+    <img id="splash-img" src="" alt="CFV Maker LTSC">
+    <div id="splash-version" class="overlay-text top-right"></div>
+    <div class="overlay-text bottom-right">Illustrator: Matcha</div>
+  </div>
+  <div class="loading-container">
+    <div id="loading-status" class="loading-text">Initializing system...</div>
+    <div class="progress-bar-bg">
+      <div id="progress-bar" class="progress-bar-fill"></div>
+    </div>
+  </div>
+
+  <script>
+    const path = require('path');
+    const fs = require('fs');
+    let imgPath = 'out/splash.png';
+    if (!fs.existsSync(path.join(__dirname, imgPath))) {
+      imgPath = 'public/splash.png';
+    }
+    document.getElementById('splash-img').src = imgPath;
+
+    try {
+      const pkgPath = path.join(__dirname, 'package.json');
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+      document.getElementById('splash-version').innerText = 'v' + pkg.version;
+    } catch (e) {
+      console.error(e);
+      document.getElementById('splash-version').innerText = '';
+    }
+
+    let assetsDir = path.join(__dirname, 'out', 'assets');
+    if (!fs.existsSync(assetsDir)) {
+      assetsDir = path.join(__dirname, 'public', 'assets');
+    }
+
+    function getAllFiles(dirPath, arrayOfFiles = []) {
+      const files = fs.readdirSync(dirPath);
+
+      files.forEach((file) => {
+        const fullPath = path.join(dirPath, file);
+        if (fs.statSync(fullPath).isDirectory()) {
+          getAllFiles(fullPath, arrayOfFiles);
+        } else {
+          const relativeToAssets = path.relative(assetsDir, fullPath);
+          const displayPath = relativeToAssets.replace(/\\/g, '/');
+          arrayOfFiles.push(displayPath);
+        }
+      });
+
+      return arrayOfFiles;
+    }
+
+    let filesToLoad = [];
+    try {
+      filesToLoad = getAllFiles(assetsDir);
+    } catch (e) {
+      console.error(e);
+      filesToLoad = [
+        'base/base_normal.png',
+        'base/base_blitz.png',
+        'frame/frame_normal.png',
+        'flavor/flavor_text.png'
+      ];
+    }
+
+    const stages = [
+      { text: 'Initializing system modules...', progress: 4 }
+    ];
+
+    const fileCount = filesToLoad.length;
+    filesToLoad.forEach((file, index) => {
+      const progress = 4 + Math.floor((index / fileCount) * 92);
+      stages.push({
+        text: `Loading assets/${file}...`,
+        progress: progress
+      });
+    });
+
+    stages.push({ text: 'Launching CFV Maker LTSC...', progress: 100 });
+
+    let currentStage = 0;
+    const statusText = document.getElementById('loading-status');
+    const progressBar = document.getElementById('progress-bar');
+
+    const totalStages = stages.length;
+    const totalDuration = 2200;
+    const stageDelay = Math.max(8, Math.min(50, Math.floor(totalDuration / totalStages)));
+
+    function updateStatus() {
+      if (currentStage < stages.length) {
+        const stage = stages[currentStage];
+        statusText.innerText = stage.text;
+        progressBar.style.width = stage.progress + '%';
+        currentStage++;
+        setTimeout(updateStatus, stageDelay);
+      } else {
+        const { ipcRenderer } = require('electron');
+        ipcRenderer.send('splash-finished');
+      }
+    }
+
+    setTimeout(updateStatus, 300);
+  </script>
+</body>
+</html>
